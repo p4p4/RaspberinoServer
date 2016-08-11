@@ -154,7 +154,7 @@ void startInstallation()
   FILE *fp;
 
   CURLcode res;
-  char *url = "https://pitikay.space/RaspberInoServer.py";
+  char *url = "https://raw.githubusercontent.com/p4p4/RaspberinoServer/master/RaspberInoServer.py";
   curl = curl_easy_init();
   if(curl)
   {
