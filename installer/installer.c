@@ -123,17 +123,17 @@ void startInstallation()
   char* config_file;
 
   echo();
-  mvaddstr(2, 1, "Vor der Installation bitte Konfiguration durchführen:");
+  mvaddstr(2, 1, "Please configure befire installation:");
   mvaddstr(3, 1, "Port: _____");
-  mvaddstr(4, 1, "Benutzer: __________");
+  mvaddstr(4, 1, "User: __________");
   mvgetnstr(3,7,str, 5);
-  mvgetnstr(4,11,user, 5);
+  mvgetnstr(4,7,user, 5);
   if(!strcmp(str, ""))
     strcpy(str, "10000");
   if(!strcmp(user, ""))
     strcpy(user, "pi");
   mvwprintw(win, 1, 1, "Port: %s", str);
-  mvwprintw(win, 1, 13, "Benutzer: %s", user);
+  mvwprintw(win, 1, 13, "User: %s", user);
   struct stat st = {0};
   if(stat("/usr/local/bin", &st) == -1)
   {
@@ -143,21 +143,21 @@ void startInstallation()
   if(stat(raspberino_config_dir, &st) == -1)
   {
     mkdir(raspberino_config_dir, 0755);
-    mvwaddstr(win, 3, 1, "Config Ordner erstellt.");
+    mvwaddstr(win, 3, 1, "Config folder created.");
   }
   else
   {
-    mvwaddstr(win, 3, 1, "Config Order vorhanden.");
+    mvwaddstr(win, 3, 1, "Config folder already exists.");
   }
 
   if(stat(raspberino_cache_dir, &st) == -1)
   {
     mkdir(raspberino_cache_dir, 0755);
-    mvwaddstr(win, 4, 1, "Data Ordner erstellt.");
+    mvwaddstr(win, 4, 1, "Data folder created");
   }
   else
   {
-    mvwaddstr(win, 4, 1, "Data Order vorhanden.");
+    mvwaddstr(win, 4, 1, "Data folder already exists");
   }
 
   if(stat(raspberino_config_file, &st) == -1)
@@ -166,11 +166,11 @@ void startInstallation()
     fprintf(fp, "port=%s\n", str);
     int i = strtol("0755", 0, 8);
     chmod(raspberino_config_file, i);
-    mvwaddstr(win, 5, 1, "Config Datei erstellt.");
+    mvwaddstr(win, 5, 1, "Config file created.");
   }
   else
   {
-    mvwaddstr(win, 5, 1, "Config Datei vorhanden.");
+    mvwaddstr(win, 5, 1, "Config file already exists.");
   }
   CURL *curl;
   FILE *fp;
@@ -180,7 +180,7 @@ void startInstallation()
   curl = curl_easy_init();
   if(curl)
   {
-    mvwaddstr(win, 6, 1, "Lade Server herunter.");
+    mvwaddstr(win, 6, 1, "Downloading server program.");
     fp = fopen(raspberino_server, "wb");
     curl_easy_setopt(curl, CURLOPT_URL, url);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
@@ -191,18 +191,18 @@ void startInstallation()
   }
   char resolved_path[PATH_MAX];
   realpath(raspberino_server, resolved_path);
-  mvwprintw(win, 6, 20, "Datei heruntergeladen: %s", resolved_path);
+  mvwprintw(win, 6, 20, "File downloaded: %s", resolved_path);
   createInit("init_template", user);
-  mvwaddstr(win, 7, 1, "Starte Server.");
+  mvwaddstr(win, 7, 1, "Starting server...");
   system(init_script_file_start);
-  mvwaddstr(win, 7, 20, "Erledigt.");
+  mvwaddstr(win, 7, 20, "Done.");
   clear();
   delwin(menuwin);
   it = (ITEM**)calloc(4, sizeof(ITEM *));
   num_items = 3;
-  it[0] = new_item("Updaten", "");
-  it[1] = new_item("Deinstallieren", "");
-  it[2] = new_item("Beenden", "");
+  it[0] = new_item("Update", "");
+  it[1] = new_item("Uninstall", "");
+  it[2] = new_item("Exit", "");
   menuwin = newwin(num_items, 15, y/4+y/2+1, 0);
   menu = new_menu(it);
   set_menu_win(menu, menuwin);
@@ -215,24 +215,24 @@ void startInstallation()
 
 void startUninstallation()
 {
-  mvwaddstr(win, 1, 1, "Stoppe server");
+  mvwaddstr(win, 1, 1, "Stopping server");
   system(init_script_file_stop);
-  mvwaddstr(win, 2, 1, "Lösche script");
+  mvwaddstr(win, 2, 1, "Deleting script");
   remove(raspberino_server);
-  mvwaddstr(win, 3, 1, "Lösche init.d");
+  mvwaddstr(win, 3, 1, "Deleting init.d");
   remove(init_script_file);
   remove(raspberino_config_file);
   remove(raspberino_cache_dir);
   remove(raspberino_config_dir);
   remove(raspberino_log_file);
   remove(raspberino_err_file);
-  mvwaddstr(win, 5, 1, "Erledigt.");
+  mvwaddstr(win, 5, 1, "Done.");
   clear();
   delwin(menuwin);
   it = (ITEM**)calloc(4, sizeof(ITEM *));
   num_items = 2;
-  it[0] = new_item("Jetzt installieren!", "");
-  it[1] = new_item("Beenden", "");
+  it[0] = new_item("Install now", "");
+  it[1] = new_item("Exit", "");
   menuwin = newwin(num_items, 20, y/4+y/2+1, 0);
   menu = new_menu(it);
   set_menu_win(menu, menuwin);
@@ -279,17 +279,17 @@ int main(void)
   {
     it = (ITEM**)calloc(4, sizeof(ITEM *));
     num_items = 3;
-    it[0] = new_item("Updaten", "");
-    it[1] = new_item("Deinstallieren", "");
-    it[2] = new_item("Beenden", "");
+    it[0] = new_item("Update", "");
+    it[1] = new_item("Uninstall", "");
+    it[2] = new_item("Exit", "");
     menu = new_menu(it);
    }
   else
   {
     num_items = 2;
     it = (ITEM**)calloc(2, sizeof(ITEM *));
-    it[0] = new_item("Jetzt installieren!", "");
-    it[1] = new_item("Beenden", "");
+    it[0] = new_item("Install now", "");
+    it[1] = new_item("Exit", "");
     menu = new_menu(it);
   }
 
@@ -317,10 +317,10 @@ bkgd(COLOR_PAIR(1));
   set_menu_win(menu, menuwin);
   post_menu(menu);
 
-  mvwaddstr(stdscr, 0, 1, "Willkommen beim RaspberIno installer!");
-  mvwaddstr(win, 1, 1, "Dieses Programm lädt die aktuelle Version des RaspberIno Servers herunter");
-  mvwaddstr(win, 2, 1, "und führt die grundlegende Konfiguration durch.");
-  mvwaddstr(win, 4, 1, "Die Installation kann jederzeit durch Drücken von 'q' abgebrochen werden.");
+  mvwaddstr(stdscr, 0, 1, "Welcome to RaspberIno installer!");
+  mvwaddstr(win, 1, 1, "This program downloads the newest version of RaspberIno server");
+  mvwaddstr(win, 2, 1, "and configures it.");
+  mvwaddstr(win, 4, 1, "Installation can be cancelled by pressing 'q'");
   refresh();
   wrefresh(win);
   wrefresh(menuwin);
@@ -341,7 +341,7 @@ bkgd(COLOR_PAIR(1));
         }
         else if(item_index(current_item(menu)) == 0)
         {
-          mvwaddstr(stdscr, 1, 1, "Installation gestartet!");
+          mvwaddstr(stdscr, 1, 1, "Installation started");
           wclear(win);
           quitMenu(menu, it, num_items);
           wclear(menuwin);
@@ -349,7 +349,7 @@ bkgd(COLOR_PAIR(1));
         }
         else if(item_index(current_item(menu)) == 1 && num_items == 3)
         {
-          mvwaddstr(stdscr, 1, 1, "Deinstallation gestartet!");
+          mvwaddstr(stdscr, 1, 1, "Uninstalling started");
           wclear(win);
           quitMenu(menu, it, num_items);
           wclear(menuwin);
