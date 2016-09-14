@@ -11,6 +11,11 @@ Instructions for installing and using a Raspberry Pi with Pocket Code can be cou
 2. run installer as root
 `` sudo sh install-raspberino.sh``
 
+# Developer Information:
+## Important: the location of this repo has been moved:
+New official Repository: [https://github.com/Catrobat/RaspberinoServer](https://github.com/Catrobat/RaspberinoServer)
+
 # License #
 [License](http://developer.catrobat.org/licenses) of our project (mainly AGPL v3).
+
 
